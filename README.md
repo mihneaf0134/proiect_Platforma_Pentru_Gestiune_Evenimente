@@ -1,0 +1,2 @@
+# proiect_Platforma_Pentru_Gestiune_Evenimente
+SpringBoot+GRPC+Docker-Compose
