@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package auth;
+
+option java_package = "com.sd.mihnea.grpcdemo.auth";
+option java_multiple_files = true;
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc ValidateToken(TokenRequest) returns (ValidateResponse);
+  rpc Logout(TokenRequest) returns (Empty);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token_value = 1;
+}
+
+message TokenRequest {
+  string token = 1;
+}
+
+message ValidateResponse {
+  bool success = 1;
+  int32 sub = 2;
+  string role = 3;
+  string email = 4;
+}
+
+message CreateUserRequest {
+  string admin_token = 1;
+  string email = 2;
+  string password = 3;
+  string role = 4;
+}
+
+message CreateUserResponse {
+  bool success = 1;
+  int32 user_id = 2;
+}
+
+message DeleteUserRequest {
+  string admin_token = 1;
+  int32 user_id = 2;
+}
+
+message DeleteUserResponse {
+  bool success = 1;
+}
+
+message GetAllUsersRequest {
+  string admin_token = 1;
+}
+
+message UserDTO {
+  int32 id = 1;
+  string email = 2;
+  string role = 3;
+}
+
+
+message GetAllUsersResponse {
+  repeated UserDTO users = 1;
+}
+
+
+message Empty {}

@@ -1,0 +1,22 @@
+LA FRONTEND SA FIE FOLOSIT HATEOAS!!! (Previous Next)
+EVENTUAL PAGINAREA TOT IN FRONTEND
+CLIENTUL IN MONGO SE CREEAZA TOT IN ADMIN IAR COMPLETAREA DATELOR SE FACE DE CLIENT
+
+Intrebari:
+Daca in payload scriem si email pentru a ne putea folosi de HttpServletRequest
+
+PUT si PATCH (PUT creeaza pentru un anumit ID (IMPOSIBIL HIBERNATE), PATCH poate)
+
+1. Clientul sa si poata vedea bilete cumparate.
+2. Butonul de purchase returneaza eroare String pattern did not match, desi a mers comanda,
+fa in asa fel incat sa ia raspunsul responseentity decat sa mi dea acel alert de string pattern
+3. Clientul sa aiba o pagina in care isi poate vedea datele personale si sa si le si poate modifice
+4. La pachete cand apas pe ele sa se si vada evenimentele care le contin.
+
+
+
+
+
+
+
+

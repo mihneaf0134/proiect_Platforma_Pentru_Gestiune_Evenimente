@@ -1,0 +1,125 @@
+version: "3.8"
+
+networks:
+  LAN-POS:
+    driver: bridge
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-auth
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: authdb
+      MYSQL_USER: auth
+      MYSQL_PASSWORD: auth
+    ports:
+      - "3307:3306" 
+    networks:
+      - LAN-POS
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-mysql:/docker-entrypoint-initdb.d
+
+  mariadb:
+    image: mariadb:11
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: proiectPOS
+      MYSQL_USER: mihnea
+      MYSQL_PASSWORD: mihnea
+    ports:
+      - "3306:3306"
+    networks:
+      - LAN-POS
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init-mariadb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-umihnea", "-pmihnea"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-container
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: mydatabase
+
+    ports:
+      - "27017:27017"
+    networks:
+      - LAN-POS
+    volumes:
+      - mongodb_data:/data/db
+
+
+  grpc-python:
+    build:
+      context: ./GRPC-PYTHON-SERVER/gRPCServer/
+      dockerfile: Dockerfile
+    container_name: python-grpc-server
+    ports:
+      - "50051:50051"
+    networks:
+      - LAN-POS
+    depends_on:
+      - mysql
+
+  client-service:
+    build:
+      context: ./CLIENT-SERVICE
+      dockerfile: Dockerfile
+    container_name: client-service
+    ports:
+      - "8081:8081"
+    networks:
+      - LAN-POS
+    depends_on:
+      - mariadb
+      - mongodb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/proiectPOS
+      - SPRING_DATA_MONGODB_URI=mongodb://root:password@mongodb:27017/mydatabase?authSource=admin
+
+  evenimente-service:
+    build:
+      context: ./EVENIMENTE-SERVICE
+      dockerfile: Dockerfile
+    container_name: evenimente-service
+    ports:
+      - "8080:8080"
+    networks:
+      - LAN-POS
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  grpc-java-client:
+    build:
+      context: ./GRPC-JAVA-CLIENT
+      dockerfile: Dockerfile
+    container_name: client-java-grpc
+    ports:
+      - "8082:8082"
+    networks:
+      - LAN-POS
+    depends_on:
+      - grpc-python
+    environment:
+      - GRPC_SERVER_HOST=grpc-python
+      - GRPC_SERVER_PORT=50051
+
+volumes:
+  mysql_data:
+  mariadb_data:
+  mongodb_data:
