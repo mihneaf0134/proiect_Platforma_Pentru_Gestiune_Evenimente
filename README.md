@@ -8,6 +8,7 @@ Comunicare: gRPC pentru serviciul de autentificare și REST pentru restul resurs
 Baze de date:
 
 SQL: Pentru evenimente, pachete și utilizatori.
+
 NoSQL (MongoDB): Pentru datele flexibile ale clienților.
 
 Orchestrare: Docker Compose pentru rularea tuturor serviciilor într-un mediu izolat.
